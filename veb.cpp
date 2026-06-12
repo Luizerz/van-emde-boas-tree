@@ -148,5 +148,19 @@ int64_t VEB::predecessor(uint64_t x) const {
 }
 
 void VEB::print() const {
-    // TODO
+    if (min == -1) {
+        std::cout << "Min: +INF\n";  // estrutura vazia
+        return;
+    }
+    std::cout << "Min: " << min;
+    if (summary != nullptr) {
+        // clusters em ordem crescente de índice, via summary
+        for (int64_t h = summary->min; h != -1; h = summary->successor((uint64_t)h)) {
+            VEB* c = clusters.find((uint32_t)h);
+            std::cout << ", C[" << h << "]: " << c->min;
+            for (int64_t l = c->successor((uint64_t)c->min); l != -1; l = c->successor((uint64_t)l))
+                std::cout << ", " << l;
+        }
+    }
+    std::cout << "\n";
 }
