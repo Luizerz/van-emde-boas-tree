@@ -47,7 +47,58 @@ void VEB::insert(uint64_t x) {
 }
 
 void VEB::remove(uint64_t x) {
-    // TODO
+    if (min == -1)
+        return;
+    if (min == max) {
+        if ((int64_t)x == min)
+            min = max = -1;
+        return;
+    }
+    if (w == 1) {
+        // universo {0, 1} com os dois presentes: sobra o outro
+        if (x == 0) min = 1;
+        else max = 0;
+        return;
+    }
+    if ((int64_t)x < min)
+        return;  // não está na estrutura
+    if ((int64_t)x == min) {
+        // o novo min é o menor elemento do primeiro cluster;
+        // ele é promovido e removido do cluster logo abaixo
+        uint64_t primeiro = (uint64_t)summary->min;
+        VEB* pc = clusters.find((uint32_t)primeiro);
+        x = index(primeiro, (uint64_t)pc->min);
+        min = (int64_t)x;
+    }
+
+    uint64_t h = high(x), l = low(x);
+    VEB* c = clusters.find((uint32_t)h);
+    if (c == nullptr)
+        return;  // não está na estrutura
+    c->remove(l);
+
+    if (c->min == -1) {
+        // cluster esvaziou: sai da tabela e do summary (espaço linear)
+        clusters.remove((uint32_t)h);
+        delete c;
+        summary->remove(h);
+        if (summary->min == -1) {
+            delete summary;
+            summary = nullptr;
+        }
+        if ((int64_t)x == max) {
+            if (summary == nullptr) {
+                max = min;
+            } else {
+                uint64_t ultimo = (uint64_t)summary->max;
+                VEB* uc = clusters.find((uint32_t)ultimo);
+                max = (int64_t)index(ultimo, (uint64_t)uc->max);
+            }
+        }
+    }
+    else if ((int64_t)x == max) {
+        max = (int64_t)index(h, (uint64_t)c->max);
+    }
 }
 
 int64_t VEB::successor(uint64_t x) const {
