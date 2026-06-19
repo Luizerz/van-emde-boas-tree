@@ -22,7 +22,6 @@ struct VEB {
     void remove(uint64_t x);                 // REM
     int64_t successor(uint64_t x) const;     // SUC (-1 = +INF)
     int64_t predecessor(uint64_t x) const;   // PRE (-1 = -INF)
-    void print() const;                      // IMP (visão do primeiro nível)
 
 private:
     uint64_t high(uint64_t x) const { return x >> (w / 2); }

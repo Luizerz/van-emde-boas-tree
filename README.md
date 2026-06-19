@@ -32,8 +32,9 @@ O programa recebe um arquivo `.txt` com uma operação por linha (`INC x`, `REM 
 - `SUC x` imprime `+INF` quando não há valor maior que x na estrutura.
 - `PRE x` imprime `-INF` quando não há valor menor que x.
 - `IMP` imprime o min do primeiro nível e, para cada cluster não vazio (em ordem
-  crescente de índice), os valores low armazenados nele em ordem crescente.
-  Com a estrutura vazia, imprime `Min: +INF`.
+  crescente de índice), os valores low nele armazenados na ordem em que foram
+  incluídos (ordem das operações INC). Com a estrutura vazia, imprime apenas a
+  linha `IMP`, sem linha de conteúdo.
 
 ## Estruturas e funções
 
@@ -50,7 +51,6 @@ O programa recebe um arquivo `.txt` com uma operação por linha (`INC x`, `REM 
     desalocado e removido da tabela e do summary, mantendo o espaço linear.
   - `successor(x)` / `predecessor(x)` — operações SUC/PRE, O(log w).
     Retornam `-1` quando não existe (impresso como `+INF`/`-INF`).
-  - `print()` — operação IMP; percorre o summary para visitar os clusters em ordem.
   - `high(x)`, `low(x)`, `index(h, l)` — aritmética de bits para dividir/recompor
     a chave (`x = high · 2^(w/2) + low`).
   - Construtor e destrutor (libera recursivamente summary e clusters).
@@ -59,7 +59,7 @@ O programa recebe um arquivo `.txt` com uma operação por linha (`INC x`, `REM 
 
 - **`class HashTable`** — tabela de dispersão com endereçamento aberto e sondagem
   linear, mapeando índice de cluster (`uint32_t`) para `VEB*`. Campos: `slots`
-  (vetor de `Slot`), `capacity` (potência de 2), `lg` (log₂ da capacidade),
+  (array de `Slot`), `capacity` (potência de 2), `lg` (log₂ da capacidade),
   `count` (slots ocupados) e `used` (ocupados + removidos).
   - **`struct Slot`** — entrada da tabela: `key`, `value` e `state`
     (`EMPTY`, `OCCUPIED` ou `DELETED`).
@@ -78,7 +78,10 @@ O programa recebe um arquivo `.txt` com uma operação por linha (`INC x`, `REM 
 
 - **`main(argc, argv)`** — recebe o caminho do arquivo de entrada como argumento,
   lê as operações linha a linha e as despacha para a `VEB` raiz (criada com
-  `w = 32`), imprimindo os resultados de SUC/PRE/IMP.
+  `w = 32`), imprimindo os resultados de SUC/PRE/IMP. Mantém também um índice
+  auxiliar (`unordered_map` valor → ordem de inclusão) usado apenas pela operação
+  IMP, que lista os valores de cada cluster na ordem em que foram incluídos — a
+  vEB não guarda essa ordem. O índice é O(n), preservando o espaço linear.
 
 ## Testes
 
@@ -88,18 +91,22 @@ make build
 diff saida.txt saida_esperada.txt
 ```
 
-O repositório inclui `entrada.txt`/`saida_esperada.txt` com o exemplo do enunciado.
-A corretude também foi verificada com um stress test de 50.000 operações aleatórias
-comparado a um oráculo (lista ordenada) e com AddressSanitizer (sem vazamentos).
+O repositório inclui `entrada.txt`/`saida_esperada.txt` para um teste rápido.
+A corretude foi verificada contra um conjunto de 50 casos de teste (entrada +
+saída esperada), com um teste diferencial de até 50.000 operações aleatórias
+comparado a um oráculo, e com AddressSanitizer (sem vazamentos).
 
 ## Pontos não especificados no enunciado e decisões adotadas
 
 O enunciado não define o comportamento em alguns casos de borda. As escolhas feitas
 foram:
 
-- **`IMP` com a estrutura vazia** — o enunciado só mostra `IMP` com elementos
-  presentes. Optou-se por imprimir `Min: +INF` (mesmo marcador usado para "não
-  existe" em SUC/PRE), em vez de uma linha vazia, para deixar o estado explícito.
+- **Ordem dos valores dentro de um cluster no `IMP`** — o exemplo do enunciado
+  mostra os valores de um cluster fora de ordem crescente, indicando a ordem de
+  inclusão (operações INC). Adotou-se essa ordem; os clusters entre si seguem
+  índice crescente.
+- **`IMP` com a estrutura vazia** — imprime apenas a linha `IMP`, sem linha de
+  conteúdo (sem `Min:`).
 - **Linha de resultado de `SUC`/`PRE` sem resposta** — o enunciado descreve os
   valores `+INF` (sucessor inexistente) e `-INF` (predecessor inexistente), mas não
   mostra o exemplo da linha impressa. Adotou-se uma linha contendo exatamente `+INF`
