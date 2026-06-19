@@ -1,5 +1,7 @@
 # Árvore van Emde Boas com Espaço Linear
 
+**Aluno:** Luiz Matheus Sena Macedo — 603273
+
 Implementação de uma van Emde Boas para palavras de 32 bits (universo de 2³² valores)
 com espaço linear no número de elementos: os clusters de cada nó são guardados em uma
 tabela de dispersão própria com table doubling/halving, em vez de um array de tamanho √u.
