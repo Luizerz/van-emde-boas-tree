@@ -3,3 +3,4 @@ programa
 saida.txt
 diferencas.txt
 *.o
+tests/
