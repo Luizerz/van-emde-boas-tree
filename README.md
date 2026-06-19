@@ -89,3 +89,23 @@ diff saida.txt saida_esperada.txt
 O repositório inclui `entrada.txt`/`saida_esperada.txt` com o exemplo do enunciado.
 A corretude também foi verificada com um stress test de 50.000 operações aleatórias
 comparado a um oráculo (lista ordenada) e com AddressSanitizer (sem vazamentos).
+
+## Pontos não especificados no enunciado e decisões adotadas
+
+O enunciado não define o comportamento em alguns casos de borda. As escolhas feitas
+foram:
+
+- **`IMP` com a estrutura vazia** — o enunciado só mostra `IMP` com elementos
+  presentes. Optou-se por imprimir `Min: +INF` (mesmo marcador usado para "não
+  existe" em SUC/PRE), em vez de uma linha vazia, para deixar o estado explícito.
+- **Linha de resultado de `SUC`/`PRE` sem resposta** — o enunciado descreve os
+  valores `+INF` (sucessor inexistente) e `-INF` (predecessor inexistente), mas não
+  mostra o exemplo da linha impressa. Adotou-se uma linha contendo exatamente `+INF`
+  ou `-INF`, logo abaixo do eco da operação (ex.: `SUC 50` seguido de `+INF`).
+- **`INC` de valor já presente** — o enunciado não trata duplicatas. A inserção é
+  idempotente: reinserir um valor existente não altera a estrutura nem gera saída.
+- **`REM` de valor ausente** — conforme o enunciado ("removido da estrutura, se
+  existir"), a remoção de um valor inexistente é ignorada silenciosamente (nenhuma
+  saída, nenhuma alteração).
+- **Intervalo dos inteiros** — assume-se entrada no universo de 32 bits, ou seja,
+  inteiros em `[0, 2^32 - 1]`. Não há validação de valores fora desse intervalo.
