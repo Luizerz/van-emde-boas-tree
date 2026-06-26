@@ -149,7 +149,7 @@ int64_t VEB::predecessor(uint64_t x) const {
 
 void VEB::print() const {
     if (min == -1) {
-        std::cout << "Min: +INF\n";  // estrutura vazia
+        std::cout << "\n";  // estrutura vazia: linha de conteúdo em branco
         return;
     }
     std::cout << "Min: " << min;

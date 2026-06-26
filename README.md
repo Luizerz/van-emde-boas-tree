@@ -33,7 +33,8 @@ O programa recebe um arquivo `.txt` com uma operação por linha (`INC x`, `REM 
 - `PRE x` imprime `-INF` quando não há valor menor que x.
 - `IMP` imprime o min do primeiro nível e, para cada cluster não vazio (em ordem
   crescente de índice), os valores low armazenados nele em ordem crescente.
-  Com a estrutura vazia, imprime `Min: +INF`.
+  Com a estrutura vazia, imprime apenas a linha `IMP` seguida de uma linha em
+  branco (sem linha de conteúdo).
 
 ## Estruturas e funções
 
@@ -97,9 +98,14 @@ comparado a um oráculo (lista ordenada) e com AddressSanitizer (sem vazamentos)
 O enunciado não define o comportamento em alguns casos de borda. As escolhas feitas
 foram:
 
+- **Ordem dos valores dentro de um cluster no `IMP`** — adotou-se ordem crescente,
+  tanto entre clusters (por índice) quanto dentro de cada cluster (pelos valores
+  low), seguindo o percurso natural da estrutura. O exemplo do enunciado mostra um
+  cluster com os valores fora de ordem crescente, mas optou-se pela ordem crescente
+  por ser a leitura direta da vEB.
 - **`IMP` com a estrutura vazia** — o enunciado só mostra `IMP` com elementos
-  presentes. Optou-se por imprimir `Min: +INF` (mesmo marcador usado para "não
-  existe" em SUC/PRE), em vez de uma linha vazia, para deixar o estado explícito.
+  presentes. Optou-se por imprimir apenas a linha `IMP` seguida de uma linha em
+  branco (sem linha de conteúdo `Min:`).
 - **Linha de resultado de `SUC`/`PRE` sem resposta** — o enunciado descreve os
   valores `+INF` (sucessor inexistente) e `-INF` (predecessor inexistente), mas não
   mostra o exemplo da linha impressa. Adotou-se uma linha contendo exatamente `+INF`
